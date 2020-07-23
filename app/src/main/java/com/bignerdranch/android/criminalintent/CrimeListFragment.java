@@ -1,5 +1,6 @@
 package com.bignerdranch.android.criminalintent;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,6 +13,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class CrimeListFragment extends Fragment {
@@ -62,8 +66,10 @@ public class CrimeListFragment extends Fragment {
         public void bind(Crime crime) {
             mCrime = crime;
             mTitleTextView.setText(mCrime.getTitle());
-            mDateTextView.setText(mCrime.getDate().toString());
-            //mSolvedImageView.setVisibility(crime.isSolved() ? View.VISIBLE : View.GONE);
+            Date mCrimeDate = mCrime.getDate();
+            SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd, yyyy hh:mm a");
+            String mCrimeDateStr = sdf.format(mCrimeDate);
+            mDateTextView.setText(mCrimeDateStr);
             mContactPoliceButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -75,43 +81,28 @@ public class CrimeListFragment extends Fragment {
 
         @Override
         public void onClick(View view) {
-            Toast.makeText(getActivity(),
-                    mCrime.getTitle() + " clicked!", Toast.LENGTH_SHORT)
-                    .show();
+//            Toast.makeText(getActivity(),
+//                    mCrime.getTitle() + " clicked!", Toast.LENGTH_SHORT)
+//                    .show();
+            Intent intent = new Intent(getActivity(),CrimeActivity.class);
+            startActivity(intent);
         }
     }
 
-//    private class CrimeHolderOld extends AbstractCrimeHolder {
-//        public CrimeHolder(LayoutInflater inflater, ViewGroup parent) {
-//            super(inflater, parent, R.layout.list_item_crime_old);
-//        }
-//    }
 
     private class CrimeHolder extends AbstractCrimeHolder {
-        //private Button mContactPoliceButton;
 
         public CrimeHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater, parent, R.layout.list_item_crime);
 
-            //mContactPoliceButton = (Button) itemView.findViewById(R.id.contact_police_button);
-//            mContactPoliceButton.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    Toast.makeText(getActivity(), "Call the cops!", Toast.LENGTH_SHORT).show();
-//                }
-//            });
-
-//            public void showPoliceButton() {
-//                mContactPoliceButton.setVisibility(crime.isSolved() ? View.VISIBLE : View.GONE);
-//            }
         }
     }
 
 
     private class CrimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-//        private static final int LIST_ITEM_CRIME = 0;
-//        private static final int LIST_ITEM_CRIME_POLICE = 1;
+        private static final int LIST_ITEM_CRIME = 0;
+        private static final int LIST_ITEM_CRIME_POLICE = 1;
         private List<Crime> mCrimes;
 
         public CrimeAdapter(List<Crime> crimes) {
@@ -122,11 +113,11 @@ public class CrimeListFragment extends Fragment {
         public int getItemViewType(int position) {
             //Crime crime = mCrimes.get(position);
             boolean requiresPolice = mCrimes.get(position).isRequiresPolice();
-//            if (requiresPolice) {
-//                return LIST_ITEM_CRIME_POLICE;
-//            } else {
-//                return LIST_ITEM_CRIME;
-//            }
+            if (requiresPolice) {
+                return LIST_ITEM_CRIME_POLICE;
+            } else {
+                return LIST_ITEM_CRIME;
+            }
         }
 
         @Override
@@ -139,16 +130,10 @@ public class CrimeListFragment extends Fragment {
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
             Crime crime = mCrimes.get(position);
-//            if (holder instanceof CrimeHolder) {
-//                ((CrimeHolder) holder).bind(crime);
-//            } else if (holder instanceof PoliceCrimeHolder) {
-//                ((PoliceCrimeHolder) holder).bind(crime);
-//            }
             ((CrimeHolder) holder).bind(crime);
         }
 
         @Override
         public int getItemCount() { return mCrimes.size(); }
-
     }
 }
