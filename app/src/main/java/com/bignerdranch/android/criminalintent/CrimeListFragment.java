@@ -23,6 +23,12 @@ public class CrimeListFragment extends Fragment {
     private CrimeAdapter mAdapter;
 
     @Override
+    public void onResume(){
+        super.onResume();
+        updateUI();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_crime_list, container, false);
@@ -39,8 +45,12 @@ public class CrimeListFragment extends Fragment {
         CrimeLab crimeLab = CrimeLab.get(getActivity());
         List<Crime> crimes = crimeLab.getCrimes();
 
-        mAdapter = new CrimeAdapter(crimes);
-        mCrimeRecyclerView.setAdapter(mAdapter);
+        if(mAdapter == null) {
+            mAdapter = new CrimeAdapter(crimes);
+            mCrimeRecyclerView.setAdapter(mAdapter);
+        } else{
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
 
@@ -81,14 +91,10 @@ public class CrimeListFragment extends Fragment {
 
         @Override
         public void onClick(View view) {
-//            Toast.makeText(getActivity(),
-//                    mCrime.getTitle() + " clicked!", Toast.LENGTH_SHORT)
-//                    .show();
-            Intent intent = new Intent(getActivity(),CrimeActivity.class);
+            Intent intent = CrimeActivity.newIntent(getActivity(),mCrime.getId());
             startActivity(intent);
         }
     }
-
 
     private class CrimeHolder extends AbstractCrimeHolder {
 
@@ -111,7 +117,6 @@ public class CrimeListFragment extends Fragment {
 
         @Override
         public int getItemViewType(int position) {
-            //Crime crime = mCrimes.get(position);
             boolean requiresPolice = mCrimes.get(position).isRequiresPolice();
             if (requiresPolice) {
                 return LIST_ITEM_CRIME_POLICE;
